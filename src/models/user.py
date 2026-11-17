@@ -1,4 +1,3 @@
-from pydantic import EmailStr
 from sqlalchemy import Date, ForeignKey, String
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
@@ -13,7 +12,7 @@ class UserORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str]
     last_name: Mapped[str]
-    email: Mapped[EmailStr] = mapped_column(unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     phone: Mapped[str] = mapped_column(unique=True, nullable=False)
     date_of_birth: Mapped[Date] = mapped_column(Date, nullable=False)
     city_id: Mapped[int] = mapped_column(ForeignKey("cities.id", ondelete="RESTRICT"))
