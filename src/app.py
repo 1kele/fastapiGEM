@@ -1,10 +1,11 @@
 import sys
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 
 from src.exception_handlers import not_found_handler
 from src.exceptions.base import NotFoundError
 from src.routers.gem_type import router as gem_type_router
 from src.routers.request import router as request_router
+from src.routers.city import router as city_router
 
 from loguru import logger
 
@@ -37,6 +38,6 @@ app = FastAPI()
 
 app.add_exception_handler(NotFoundError, not_found_handler)
 
-app.include_router(gem_router)
 app.include_router(gem_type_router)
 app.include_router(request_router)
+app.include_router(city_router)

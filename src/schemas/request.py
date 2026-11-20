@@ -10,7 +10,8 @@ from enums.request_status import RequestStatus
 from enums.stone_size import StoneSize
 from enums.treatment_type import TreatmentType
 
-class GemRequestCreate(BaseModel):
+
+class RequestCreate(BaseModel):
     stone_id: int
     city_id: int
     shape: str
@@ -23,24 +24,28 @@ class GemRequestCreate(BaseModel):
     clarity: ClarityType
     inclusions: str
     treatment: TreatmentType
-    price_type: PriceType
-    price_min: Decimal
-    price_max: Decimal
+    price_per_carat_min: Decimal | None = None
+    price_per_carat_max: Decimal | None = None
+    price_total_min: Decimal | None = None
+    price_total_max: Decimal | None = None
     additional_information: str
     created_at: datetime
     expires_at: datetime
     is_profile_hidden: bool
     has_certificate: bool
 
-class GemRequestCreateInternal(GemRequestCreate):
+
+class RequestCreateInternal(RequestCreate):
     creator_id: int
 
-class GemRequestResponse(GemRequestCreateInternal):
+
+class RequestResponse(RequestCreateInternal):
     id: int
     status: RequestStatus
     model_config = ConfigDict(from_attributes=True)
 
-class GemRequestUpdate(BaseModel):
+
+class RequestUpdate(BaseModel):
     stone_id: int | None = None
     city_id: int | None = None
     shape: str | None = None
@@ -53,29 +58,30 @@ class GemRequestUpdate(BaseModel):
     clarity: ClarityType | None = None
     inclusions: str | None = None
     treatment: TreatmentType | None = None
-    price_type: PriceType | None = None
-    price_min: Decimal | None = None
-    price_max: Decimal | None = None
+    price_per_carat_min: Decimal | None = None
+    price_per_carat_max: Decimal | None = None
+    price_total_min: Decimal | None = None
+    price_total_max: Decimal | None = None
     additional_information: str | None = None
-    created_at: datetime
     expires_at: datetime | None = None
     is_profile_hidden: bool | None = None
     has_certificate: bool | None = None
 
-class GemRequestFilter(BaseModel):
+
+class RequestFilter(BaseModel):
     stone_id: list[int] | None = None
     city_id: list[int] | None = None
     shape: list[str] | None = None
     color: list[str] | None = None
     origin: list[str] | None = None
-    type_quantity: list[QuantityType] | None = None
     weight_min: Decimal | None = Field(default=None, ge=0)
     weight_max: Decimal | None = Field(default=None, gt=0)
     stone_size: list[StoneSize] | None = None
-    clarity: list[ClarityType] | None = None
-    inclusions: str | None = None
-    treatment: list[TreatmentType] | None = None
-    price_type: list[PriceType] | None = None
-    price_min: Decimal | None = None
-    price_max: Decimal | None = None
-    certificate: bool | None = None
+    price_per_carat_min: Decimal | None = None
+    price_per_carat_max: Decimal | None = None
+    price_total_min: Decimal | None = None
+    price_total_max: Decimal | None = None
+
+
+class ChangeRequestStatus(BaseModel):
+    status: RequestStatus

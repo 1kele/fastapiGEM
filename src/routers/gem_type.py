@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 
+from depends import PaginationDep
 from src.database import SessionDep
 from src.exceptions.base import NotFoundError
 from src.repositories.gem_type import GemTypeRepository
@@ -14,9 +15,9 @@ async def get_gem_by_id(gem_type_id: int, session: SessionDep):
 
 
 @router.get("/")
-async def get_gem_types(session: SessionDep, page: int = 1, limit: int = 10):
+async def get_gem_types(session: SessionDep, pagination: PaginationDep):
     all_types = await GemTypeRepository(session).get_all(
-        offset=(page - 1) * limit, limit=limit
+        offset=pagination.offset, limit=pagination.limit
     )
 
     return all_types
@@ -32,7 +33,7 @@ async def create_gem(data: GemTypeRequest, session: SessionDep):
 
 @router.post(
     "/bulk",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_many_types(data: list[GemTypeRequest], session: SessionDep):
     await GemTypeRepository(session).add_bulk(data)

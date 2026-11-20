@@ -8,3 +8,7 @@ class NotFoundError(AppError):
 
 class UniqueViolationError(AppError):
     pass
+
+
+class PermissionDeniedError(AppError):
+    pass

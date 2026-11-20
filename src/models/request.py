@@ -20,7 +20,7 @@ from src.enums.stone_size import StoneSize
 from src.enums.treatment_type import TreatmentType
 
 
-class GemRequestsORM(Base):
+class RequestsORM(Base):
     __tablename__ = "requests"
 
     __table_args__ = (
@@ -29,10 +29,14 @@ class GemRequestsORM(Base):
         CheckConstraint("weight_max >= weight_min", name="ck_gems_weight_range"),
         CheckConstraint("price_per_carat_min >= 0", name="ck_price_min_positive"),
         CheckConstraint("price_per_carat_max >= 0", name="ck_price_max_positive"),
-        CheckConstraint("price_per_carat_max >= price_per_carat_min", name="ck_request_price_range"),
+        CheckConstraint(
+            "price_per_carat_max >= price_per_carat_min", name="ck_request_price_range"
+        ),
         CheckConstraint("price_total_min >= 0", name="ck_price_total_min_positive"),
         CheckConstraint("price_total_max >= 0", name="ck_price_total_max_positive"),
-        CheckConstraint("price_total_max >= price_total_min", name="ck_request_price_total_range"),
+        CheckConstraint(
+            "price_total_max >= price_total_min", name="ck_request_price_total_range"
+        ),
         CheckConstraint(
             "created_at <= expires_at", name="ck_requests_expires_after_created"
         ),
@@ -104,6 +108,7 @@ class GemRequestsORM(Base):
             RequestStatus,
             name="request_status",
             values_callable=lambda cls: [e.value for e in cls],
-        )
-        ,default=RequestStatus.CREATED, nullable=False
+        ),
+        default=RequestStatus.CREATED,
+        nullable=False,
     )

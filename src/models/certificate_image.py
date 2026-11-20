@@ -11,7 +11,9 @@ class CertificatesImageORM(Base):
 
     __table_args__ = (
         CheckConstraint("position >= 0", name="ch_certificate_position_positive"),
-        UniqueConstraint("offers_id", "position", name="uq_certificate_images_position"),
+        UniqueConstraint(
+            "offers_id", "position", name="uq_certificate_images_position"
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

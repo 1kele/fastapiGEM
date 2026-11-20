@@ -1,7 +1,15 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Numeric, func, String, Computed
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Numeric,
+    func,
+    String,
+    Computed,
+)
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -101,7 +109,8 @@ class OfferORM(Base):
             name="offer_status",
             values_callable=lambda cls: [e.value for e in cls],
         ),
-        nullable=False, default=OfferStatus.PENDING
+        nullable=False,
+        default=OfferStatus.PENDING,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=func.now()
