@@ -29,9 +29,7 @@ class RequestsORM(Base):
         CheckConstraint("weight_max >= weight_min", name="ck_gems_weight_range"),
         CheckConstraint("price_min >= 0", name="ck_price_min_positive"),
         CheckConstraint("price_max >= 0", name="ck_price_max_positive"),
-        CheckConstraint(
-            "price_max >= price_min", name="ck_request_price_range"
-        ),
+        CheckConstraint("price_max >= price_min", name="ck_request_price_range"),
         CheckConstraint(
             "created_at <= expires_at", name="ck_requests_expires_after_created"
         ),

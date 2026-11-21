@@ -19,7 +19,6 @@ from enums.stone_size import StoneSize
 from enums.treatment_type import TreatmentType
 from src.database import Base
 from src.enums.offer_status import OfferStatus
-from src.enums.price_type import PriceType
 
 
 class OfferORM(Base):

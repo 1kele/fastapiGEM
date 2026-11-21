@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 from enums.clarity_type import ClarityType
-from enums.price_type import PriceType
 from enums.quantity_type import QuantityType
 from enums.request_status import RequestStatus
 from enums.stone_size import StoneSize
@@ -24,10 +23,8 @@ class RequestCreate(BaseModel):
     clarity: ClarityType
     inclusions: str
     treatment: TreatmentType
-    price_per_carat_min: Decimal | None = None
-    price_per_carat_max: Decimal | None = None
-    price_total_min: Decimal | None = None
-    price_total_max: Decimal | None = None
+    price_min: Decimal
+    price_max: Decimal
     additional_information: str
     created_at: datetime
     expires_at: datetime
@@ -58,10 +55,8 @@ class RequestUpdate(BaseModel):
     clarity: ClarityType | None = None
     inclusions: str | None = None
     treatment: TreatmentType | None = None
-    price_per_carat_min: Decimal | None = None
-    price_per_carat_max: Decimal | None = None
-    price_total_min: Decimal | None = None
-    price_total_max: Decimal | None = None
+    price_min: Decimal | None = None
+    price_max: Decimal | None = None
     additional_information: str | None = None
     expires_at: datetime | None = None
     is_profile_hidden: bool | None = None
@@ -77,10 +72,8 @@ class RequestFilter(BaseModel):
     weight_min: Decimal | None = Field(default=None, ge=0)
     weight_max: Decimal | None = Field(default=None, gt=0)
     stone_size: list[StoneSize] | None = None
-    price_per_carat_min: Decimal | None = None
-    price_per_carat_max: Decimal | None = None
-    price_total_min: Decimal | None = None
-    price_total_max: Decimal | None = None
+    price_min: Decimal | None = None
+    price_max: Decimal | None = None
 
 
 class ChangeRequestStatus(BaseModel):
