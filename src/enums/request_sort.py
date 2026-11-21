@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class RequestSortField(str, Enum):
-    PRICE = "price_total"
+    PRICE = "price"
     WEIGHT = "weight"

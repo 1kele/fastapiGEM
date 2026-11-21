@@ -39,18 +39,10 @@ class RequestRepository(BaseRepository):
             stmt = stmt.where(self.model.weight_max >= filters.weight_min)
         if filters.weight_max is not None:
             stmt = stmt.where(self.model.weight_min >= filters.weight_max)
-        if filters.price_per_carat_min is not None:
-            stmt = stmt.where(
-                self.model.price_per_carat_min >= filters.price_per_carat_min
-            )
-        if filters.price_per_carat_max is not None:
-            stmt = stmt.where(
-                self.model.price_per_carat_max >= filters.price_per_carat_max
-            )
-        if filters.price_total_min is not None:
-            stmt = stmt.where(self.model.price_total_min >= filters.price_total_min)
-        if filters.price_total_max is not None:
-            stmt = stmt.where(self.model.price_total_max >= filters.price_total_max)
+        if filters.price_min is not None:
+            stmt = stmt.where(self.model.price_min >= filters.price_min)
+        if filters.price_max is not None:
+            stmt = stmt.where(self.model.price_max >= filters.price_max)
 
         if sort_by == RequestSortField.WEIGHT:
             if sort == Sort.DESC:
@@ -58,18 +50,11 @@ class RequestRepository(BaseRepository):
             else:
                 stmt = stmt.order_by(self.model.weight_min)
 
-        # проблема с сортировкой по цене в том что у нас есть либо цена за караты либо тотал и в каждом request разные поля используются
         if sort_by == RequestSortField.PRICE:
             if sort == Sort.DESC:
-                price = func.coalesce(
-                    self.model.price_total_max, self.model.price_per_carat_max
-                )
-                stmt = stmt.order_by(price.desc())
+                stmt = stmt.order_by(self.model.price_max.desc())
             else:
-                price = func.coalesce(
-                    self.model.price_total_min, self.model.price_per_carat_min
-                )
-                stmt = stmt.order_by(price)
+                stmt = stmt.order_by(self.model.price_min)
 
         stmt = stmt.where(
             and_(
@@ -89,25 +74,3 @@ class RequestRepository(BaseRepository):
         instance = result.scalars().all()
 
         return instance
-
-    async def cancelled_request(self, request_id: int, user_id: int) -> None:
-        stmt1 = select(self.model).where(id=request_id)
-        result1 = await self.session.execute(stmt1)
-        instance1 = result1.scalar_one_or_none()
-
-        if not instance1:
-            raise NotFoundError("Request not found")
-
-        request = self.schema.model_validate(instance1)
-
-        if not request.creator_id == user_id:
-            raise PermissionDeniedError(
-                "Доступ запрещен! Нельзя редактировать чужую заявку"
-            )
-
-        stmt2 = (
-            update(self.model)
-            .where(id=request_id)
-            .values(status=RequestStatus.CANCELLED)
-        )
-        result2 = await self.session.execute(stmt2)
