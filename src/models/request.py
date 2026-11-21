@@ -27,15 +27,10 @@ class RequestsORM(Base):
         CheckConstraint("weight_min >= 0", name="ck_gems_min_weight_positive"),
         CheckConstraint("weight_max >= 0", name="ck_gems_max_weight_positive"),
         CheckConstraint("weight_max >= weight_min", name="ck_gems_weight_range"),
-        CheckConstraint("price_per_carat_min >= 0", name="ck_price_min_positive"),
-        CheckConstraint("price_per_carat_max >= 0", name="ck_price_max_positive"),
+        CheckConstraint("price_min >= 0", name="ck_price_min_positive"),
+        CheckConstraint("price_max >= 0", name="ck_price_max_positive"),
         CheckConstraint(
-            "price_per_carat_max >= price_per_carat_min", name="ck_request_price_range"
-        ),
-        CheckConstraint("price_total_min >= 0", name="ck_price_total_min_positive"),
-        CheckConstraint("price_total_max >= 0", name="ck_price_total_max_positive"),
-        CheckConstraint(
-            "price_total_max >= price_total_min", name="ck_request_price_total_range"
+            "price_max >= price_min", name="ck_request_price_range"
         ),
         CheckConstraint(
             "created_at <= expires_at", name="ck_requests_expires_after_created"
@@ -90,10 +85,8 @@ class RequestsORM(Base):
         ),
         nullable=False,
     )
-    price_per_carat_min: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
-    price_per_carat_max: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
-    price_total_min: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
-    price_total_max: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    price_min: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    price_max: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     additional_information: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=func.now()

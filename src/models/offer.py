@@ -28,7 +28,6 @@ class OfferORM(Base):
     __table_args__ = (
         CheckConstraint("weight > 0", name="ck_offers_weight_positive"),
         CheckConstraint("price >= 0", name="ck_offers_price_positive"),
-        CheckConstraint("price_total >= 0", name="ck_offers_total_price_positive"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -78,30 +77,7 @@ class OfferORM(Base):
         ),
         nullable=False,
     )
-    price_type: Mapped[PriceType] = mapped_column(
-        SQLEnum(
-            PriceType,
-            name="price_type",
-            values_callable=lambda cls: [e.value for e in cls],
-        ),
-        nullable=False,
-    )
     price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
-    price_total: Mapped[Decimal] = mapped_column(
-        Numeric(12, 2),
-        Computed(
-            """
-            CASE
-                WHEN price_type = 'total_price'
-                    THEN price
-                WHEN price_type = 'price_per_carat'
-                    THEN ROUND(price * weight, 2)
-            END
-            """,
-            persisted=True,
-        ),
-        nullable=False,
-    )
     additional_information: Mapped[str]
     status: Mapped[OfferStatus] = mapped_column(
         SQLEnum(

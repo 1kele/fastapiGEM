@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 6ec471b5e33a
+Revision ID: 9b61eecb47e6
 Revises: 
-Create Date: 2026-11-17 17:55:26.754719
+Create Date: 2026-11-21 13:01:59.635583
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6ec471b5e33a'
+revision: str = '9b61eecb47e6'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -68,10 +68,8 @@ def upgrade() -> None:
     sa.Column('clarity', sa.Enum('FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2', 'I1', 'I2', 'I3', 'VVS', 'VS', 'eye_clean', 'slightly_included', 'moderately_included', 'heavily_included', name='clarity_type'), nullable=False),
     sa.Column('inclusions', sa.String(), nullable=False),
     sa.Column('treatment', sa.Enum('unheated', 'heating', 'oiling', 'irradiation', 'bleaching', 'waxing', 'fracture_filling', 'glass_filling', 'dyeing', 'diffusion', 'hpht', 'laser_drilling', 'unknown', name='treatment_type'), nullable=False),
-    sa.Column('price_per_carat_min', sa.Numeric(precision=12, scale=2), nullable=True),
-    sa.Column('price_per_carat_max', sa.Numeric(precision=12, scale=2), nullable=True),
-    sa.Column('price_total_min', sa.Numeric(precision=12, scale=2), nullable=True),
-    sa.Column('price_total_max', sa.Numeric(precision=12, scale=2), nullable=True),
+    sa.Column('price_min', sa.Numeric(precision=12, scale=2), nullable=False),
+    sa.Column('price_max', sa.Numeric(precision=12, scale=2), nullable=False),
     sa.Column('additional_information', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
@@ -79,12 +77,9 @@ def upgrade() -> None:
     sa.Column('has_certificate', sa.Boolean(), nullable=False),
     sa.Column('status', sa.Enum('created', 'accepted', 'completed', 'cancelled', 'expired', name='request_status'), nullable=False),
     sa.CheckConstraint('created_at <= expires_at', name='ck_requests_expires_after_created'),
-    sa.CheckConstraint('price_per_carat_max >= 0', name='ck_price_max_positive'),
-    sa.CheckConstraint('price_per_carat_max >= price_per_carat_min', name='ck_request_price_range'),
-    sa.CheckConstraint('price_per_carat_min >= 0', name='ck_price_min_positive'),
-    sa.CheckConstraint('price_total_max >= 0', name='ck_price_total_max_positive'),
-    sa.CheckConstraint('price_total_max >= price_total_min', name='ck_request_price_total_range'),
-    sa.CheckConstraint('price_total_min >= 0', name='ck_price_total_min_positive'),
+    sa.CheckConstraint('price_max >= 0', name='ck_price_max_positive'),
+    sa.CheckConstraint('price_max >= price_min', name='ck_request_price_range'),
+    sa.CheckConstraint('price_min >= 0', name='ck_price_min_positive'),
     sa.CheckConstraint('weight_max >= 0', name='ck_gems_max_weight_positive'),
     sa.CheckConstraint('weight_max >= weight_min', name='ck_gems_weight_range'),
     sa.CheckConstraint('weight_min >= 0', name='ck_gems_min_weight_positive'),
@@ -107,14 +102,11 @@ def upgrade() -> None:
     sa.Column('clarity', sa.Enum('FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2', 'I1', 'I2', 'I3', 'VVS', 'VS', 'eye_clean', 'slightly_included', 'moderately_included', 'heavily_included', name='clarity_type'), nullable=False),
     sa.Column('inclusions', sa.String(), nullable=False),
     sa.Column('treatment', sa.Enum('unheated', 'heating', 'oiling', 'irradiation', 'bleaching', 'waxing', 'fracture_filling', 'glass_filling', 'dyeing', 'diffusion', 'hpht', 'laser_drilling', 'unknown', name='treatment_type'), nullable=False),
-    sa.Column('price_type', sa.Enum('price_per_carat', 'total_price', name='price_type'), nullable=False),
     sa.Column('price', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('price_total', sa.Numeric(precision=12, scale=2), sa.Computed("\n            CASE\n                WHEN price_type = 'total_price'\n                    THEN price\n                WHEN price_type = 'price_per_carat'\n                    THEN ROUND(price * weight, 2)\n            END\n            ", persisted=True), nullable=False),
     sa.Column('additional_information', sa.String(), nullable=False),
     sa.Column('status', sa.Enum('pending', 'accepted', 'rejected', 'withdrawn', name='offer_status'), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.CheckConstraint('price >= 0', name='ck_offers_price_positive'),
-    sa.CheckConstraint('price_total >= 0', name='ck_offers_total_price_positive'),
     sa.CheckConstraint('weight > 0', name='ck_offers_weight_positive'),
     sa.ForeignKeyConstraint(['city_id'], ['cities.id'], ondelete='RESTRICT'),
     sa.ForeignKeyConstraint(['request_id'], ['requests.id'], ondelete='RESTRICT'),
