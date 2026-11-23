@@ -14,7 +14,7 @@ from schemas.request import (
 )
 from services.request import RequestServices
 
-router = APIRouter(tags=["Gem Request"], prefix="/request")
+router = APIRouter(tags=["Request"], prefix="/requests")
 
 
 # Авторизация

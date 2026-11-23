@@ -5,7 +5,7 @@ from depends import PaginationDep
 from repositories.city import CityRepository
 from schemas.city import CityRequest, CityUpdate
 
-router = APIRouter(tags=["Cities"], prefix="/city")
+router = APIRouter(tags=["Cities"], prefix="/cities")
 
 
 @router.post("/")

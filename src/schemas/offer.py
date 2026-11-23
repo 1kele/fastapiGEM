@@ -11,14 +11,12 @@ from enums.treatment_type import TreatmentType
 
 
 class OfferRequest(BaseModel):
-    request_id: int
-    seller_id: int
     city_id: int
     shape: str
     color: str
     origin: str
     type_quantity: QuantityType
-    weight: Decimal
+    weight: Decimal = Field(gt=0)
     size: StoneSize
     clarity: ClarityType
     inclusions: str
@@ -29,10 +27,17 @@ class OfferRequest(BaseModel):
 
 class OfferResponse(OfferRequest):
     id: int
+    request_id: int
+    seller_id: int
     status: OfferStatus
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OfferCreateInternal(OfferRequest):
+    request_id: int
+    seller_id: int
 
 
 class OfferUpdate(BaseModel):
@@ -41,7 +46,7 @@ class OfferUpdate(BaseModel):
     color: str | None = None
     origin: str | None = None
     type_quantity: QuantityType | None = None
-    weight: Decimal | None = None
+    weight: Decimal | None = Field(default=None, gt=0)
     size: StoneSize | None = None
     clarity: ClarityType | None = None
     inclusions: str | None = None
@@ -50,5 +55,10 @@ class OfferUpdate(BaseModel):
     additional_information: str | None = None
 
 
-class OfferChangeStatus(BaseModel):
+class OfferStatusChange(BaseModel):
+    status: OfferStatus
+
+
+class OfferStatusResponse(BaseModel):
+    id: int
     status: OfferStatus

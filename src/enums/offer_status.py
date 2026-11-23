@@ -6,3 +6,4 @@ class OfferStatus(str, Enum):
     ACCEPTED = "accepted"
     REJECTED = "rejected"
     WITHDRAWN = "withdrawn"
+    CANCELLED = "cancelled"

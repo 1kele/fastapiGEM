@@ -19,8 +19,8 @@ class UserORM(Base):
     organization: Mapped[str] = mapped_column(String(255))
     experience: Mapped[int] = mapped_column(nullable=False)
     address: Mapped[str] = mapped_column(String(150), nullable=False)
-    passport_photo_storage_key: Mapped[str]
-    profile_photo_storage_key: Mapped[str]
+    passport_photo_storage_key: Mapped[str | None]
+    profile_photo_storage_key: Mapped[str | None]
     role: Mapped[UserRole] = mapped_column(
         SQLEnum(
             UserRole,
