@@ -3,11 +3,11 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from enums.clarity_type import ClarityType
-from enums.offer_status import OfferStatus
-from enums.quantity_type import QuantityType
-from enums.stone_size import StoneSize
-from enums.treatment_type import TreatmentType
+from src.enums.clarity_type import ClarityType
+from src.enums.offer_status import OfferStatus
+from src.enums.quantity_type import QuantityType
+from src.enums.stone_size import StoneSize
+from src.enums.treatment_type import TreatmentType
 
 
 class OfferRequest(BaseModel):

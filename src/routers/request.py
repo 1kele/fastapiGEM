@@ -1,18 +1,16 @@
 from fastapi import APIRouter, status
-from fastapi.params import Query
 
-from database import SessionDep
-from depends import PaginationDep
-from enums.request_sort import RequestSortField
-from enums.sort import Sort
-from repositories.request import RequestRepository
-from schemas.request import (
+from src.database import SessionDep
+from src.depends import CurrentUserDep, PaginationDep, RequestFilterDep
+from src.enums.request_sort import RequestSortField
+from src.enums.sort import Sort
+from src.repositories.request import RequestRepository
+from src.schemas.request import (
     RequestCreate,
     RequestCreateInternal,
-    RequestFilter,
     RequestUpdate,
 )
-from services.request import RequestServices
+from src.services.request import RequestServices
 
 router = APIRouter(tags=["Request"], prefix="/requests")
 
@@ -34,7 +32,7 @@ async def get_requests(
     sort_by: RequestSortField,
     pagination: PaginationDep,
     sort: Sort,
-    filters: RequestFilter = Query(),
+    filters: RequestFilterDep,
 ):
     return await RequestRepository(session).get_filter_by(
         filters=filters,
@@ -47,9 +45,11 @@ async def get_requests(
 
 # Авторизация
 @router.get("/my")
-async def get_my_requests(session: SessionDep, pagination: PaginationDep):
+async def get_my_requests(
+    current_user: CurrentUserDep, pagination: PaginationDep, session: SessionDep
+):
     return await RequestRepository(session).get_all(
-        creator_id=1, offset=pagination.offset, limit=pagination.limit
+        creator_id=current_user, offset=pagination.offset, limit=pagination.limit
     )
 
 
@@ -60,21 +60,36 @@ async def get_requests_by_id(request_id: int, session: SessionDep):
 
 # Авторизация(проверка владельца)
 @router.patch("/{request_id}")
-async def update_request(session: SessionDep, request_id: int, data: RequestUpdate):
-    updated_request = await RequestRepository(session).update(id=request_id, data=data)
+async def update_request(
+    request_id: int,
+    data: RequestUpdate,
+    current_user: CurrentUserDep,
+    session: SessionDep,
+):
+    updated_request = await RequestServices().update_request(
+        request_id=request_id, data=data, user_id=current_user.id, session=session
+    )
     await session.commit()
     return updated_request
 
 
 # Авторизация
 @router.patch("/cancel/{request_id}", status_code=status.HTTP_200_OK)
-async def cancelled_request(session: SessionDep, request_id: int):
-    await RequestServices().cancel_request(session, request_id=request_id, user_id=1)
+async def cancelled_request(
+    request_id: int, current_user: CurrentUserDep, session: SessionDep
+):
+    await RequestServices().cancel_request(
+        request_id=request_id, user_id=current_user.id, session=session
+    )
     await session.commit()
 
 
 # Авторизация(проверка владельца)
 @router.delete("/{request_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_request(request_id: int, session: SessionDep):
-    await RequestRepository(session).delete(id=request_id)
+async def delete_request(
+    request_id: int, current_user: CurrentUserDep, session: SessionDep
+):
+    await RequestServices().delete_request(
+        request_id=request_id, user_id=current_user.id, session=session
+    )
     await session.commit()

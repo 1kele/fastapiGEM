@@ -1,8 +1,7 @@
 from fastapi import APIRouter, status
 
-from depends import PaginationDep
 from src.database import SessionDep
-from src.exceptions.base import NotFoundError
+from src.depends import PaginationDep
 from src.repositories.gem_type import GemTypeRepository
 from src.schemas.gem_type import GemTypeRequest, GemTypeUpdate
 

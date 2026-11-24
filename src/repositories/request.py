@@ -1,17 +1,16 @@
 from operator import and_
 
-from sqlalchemy import select, func, update
+from sqlalchemy import select
 
-from enums.request_sort import RequestSortField
-from enums.request_status import RequestStatus
-from enums.sort import Sort
-from exceptions.base import NotFoundError, PermissionDeniedError
-from models import RequestsORM
-from repositories.base import BaseRepository
-from schemas.request import RequestResponse, RequestFilter
+from src.enums.request_sort import RequestSortField
+from src.enums.request_status import RequestStatus
+from src.enums.sort import Sort
+from src.models import RequestsORM
+from src.repositories.base import BaseRepository
+from src.schemas.request import RequestFilter, RequestResponse
 
 
-class RequestRepository(BaseRepository):
+class RequestRepository(BaseRepository[RequestsORM]):
     model = RequestsORM
     schema = RequestResponse
 

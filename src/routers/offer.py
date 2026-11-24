@@ -1,16 +1,15 @@
 from fastapi import APIRouter
-from sqlalchemy.util import await_
 
-from database import SessionDep
-from depends import PaginationDep, CurrentUserDep
-from repositories.offer import OfferRepository
-from schemas.offer import (
-    OfferRequest,
-    OfferUpdate,
-    OfferStatusResponse,
+from src.database import SessionDep
+from src.depends import CurrentUserDep, PaginationDep
+from src.repositories.offer import OfferRepository
+from src.schemas.offer import (
     OfferCreateInternal,
+    OfferRequest,
+    OfferStatusResponse,
+    OfferUpdate,
 )
-from services.offer import OfferService
+from src.services.offer import OfferService
 
 request_offer_router = APIRouter(tags=["Offer"])
 router = APIRouter(tags=["Offer"], prefix="/offers")

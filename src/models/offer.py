@@ -6,19 +6,18 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Numeric,
-    func,
     String,
-    Computed,
+    func,
 )
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from enums.clarity_type import ClarityType
-from enums.quantity_type import QuantityType
-from enums.stone_size import StoneSize
-from enums.treatment_type import TreatmentType
 from src.database import Base
+from src.enums.clarity_type import ClarityType
 from src.enums.offer_status import OfferStatus
+from src.enums.quantity_type import QuantityType
+from src.enums.stone_size import StoneSize
+from src.enums.treatment_type import TreatmentType
 
 
 class OfferORM(Base):

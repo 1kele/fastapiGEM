@@ -1,11 +1,12 @@
 from datetime import date
 from typing import Annotated
 
-from fastapi.params import Query, Depends
+from fastapi.params import Depends, Query
 
-from enums.user_role import UserRole
-from schemas.pagination import PaginationParams
-from schemas.user import UserResponse
+from src.enums.user_role import UserRole
+from src.schemas.pagination import PaginationParams
+from src.schemas.request import RequestFilter
+from src.schemas.user import UserResponse
 
 PaginationDep = Annotated[PaginationParams, Query()]
 
@@ -29,3 +30,4 @@ async def get_current_user():
 
 
 CurrentUserDep = Annotated[UserResponse, Depends(get_current_user)]
+RequestFilterDep = Annotated[RequestFilter, Query()]

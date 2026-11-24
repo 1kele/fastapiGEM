@@ -1,16 +1,17 @@
 import sys
+
 from fastapi import FastAPI
-
-from exceptions.offer import InvalidStatusTransitionError
-from src.exception_handlers import not_found_handler, invalid_status_handler
-from src.exceptions.base import NotFoundError
-from src.routers.gem_type import router as gem_type_router
-from src.routers.request import router as request_router
-from src.routers.city import router as city_router
-from src.routers.offer import router as offer_router
-from src.routers.offer import request_offer_router as request_offer_router
-
 from loguru import logger
+
+from src.exception_handlers import invalid_status_handler, not_found_handler
+from src.exceptions.base import NotFoundError
+from src.exceptions.offer import InvalidStatusTransitionError
+from src.routers.city import router as city_router
+from src.routers.gem_type import router as gem_type_router
+from src.routers.offer import request_offer_router
+from src.routers.offer import router as offer_router
+from src.routers.request import router as request_router
+from src.routers.user import router as user_router
 
 logger.remove()
 
@@ -47,3 +48,4 @@ app.include_router(request_router)
 app.include_router(city_router)
 app.include_router(request_offer_router)
 app.include_router(offer_router)
+app.include_router(user_router)

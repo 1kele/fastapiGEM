@@ -1,15 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import Base
-from enums.offer_status import OfferStatus
-from enums.request_status import RequestStatus
-from exceptions.base import PermissionDeniedError
-from exceptions.offer import InvalidStatusTransitionError
-from repositories.offer import OfferRepository
-from repositories.request import RequestRepository
-from schemas.offer import OfferUpdate, OfferStatusChange
-from schemas.request import ChangeRequestStatus
-from services.request import RequestServices
+from src.database import Base
+from src.enums.offer_status import OfferStatus
+from src.enums.request_status import RequestStatus
+from src.exceptions.base import PermissionDeniedError
+from src.exceptions.offer import InvalidStatusTransitionError
+from src.repositories.offer import OfferRepository
+from src.schemas.offer import OfferStatusChange, OfferUpdate
 
 
 class OfferService:

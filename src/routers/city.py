@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status
 
-from database import SessionDep
-from depends import PaginationDep
-from repositories.city import CityRepository
-from schemas.city import CityRequest, CityUpdate
+from src.database import SessionDep
+from src.depends import PaginationDep
+from src.repositories.city import CityRepository
+from src.schemas.city import CityRequest, CityUpdate
 
 router = APIRouter(tags=["Cities"], prefix="/cities")
 
