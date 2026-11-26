@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from typing import Annotated
 
 from fastapi.params import Depends, Query
@@ -19,12 +19,10 @@ async def get_current_user():
         last_name="Пользователь",
         email="test@example.com",
         phone="89618239112",
-        date_of_birthday=date(2000, 12, 12),
+        date_of_birthday=datetime(2000, 12, 12),
         organization="GemScout",
         experience=2,
         address="Тестовый адрес",
-        passport_photo_storage_key="test/passport.jpg",
-        profile_photo_storage_key="test/profile.jpg",
         role=UserRole.USER,
     )
 

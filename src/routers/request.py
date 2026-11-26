@@ -17,9 +17,9 @@ router = APIRouter(tags=["Request"], prefix="/requests")
 
 # Авторизация
 @router.post("/")
-async def create_request(data: RequestCreate, session: SessionDep):
+async def create_request(data: RequestCreate,current_user: CurrentUserDep,  session: SessionDep):
     new_request = await RequestRepository(session).add(
-        RequestCreateInternal(**data.model_dump(), creator_id=1)
+        RequestCreateInternal(**data.model_dump(), creator_id=current_user.id)
     )
     await session.commit()
 
@@ -29,10 +29,10 @@ async def create_request(data: RequestCreate, session: SessionDep):
 @router.get("/")
 async def get_requests(
     session: SessionDep,
-    sort_by: RequestSortField,
     pagination: PaginationDep,
-    sort: Sort,
     filters: RequestFilterDep,
+    sort_by: RequestSortField | None = None,
+    sort: Sort | None = None,
 ):
     return await RequestRepository(session).get_filter_by(
         filters=filters,
@@ -49,7 +49,7 @@ async def get_my_requests(
     current_user: CurrentUserDep, pagination: PaginationDep, session: SessionDep
 ):
     return await RequestRepository(session).get_all(
-        creator_id=current_user, offset=pagination.offset, limit=pagination.limit
+        creator_id=current_user.id, offset=pagination.offset, limit=pagination.limit
     )
 
 
