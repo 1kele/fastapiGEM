@@ -24,7 +24,7 @@ async def test_add_bulk(client):
         json=[{"name": "Казань", "country_code":"RU"},{"name": "Питер", "country_code":"RU"}]
     )
 
-    assert response.status_code == 204
+    assert response.status_code == 201
 
 async def test_get_city_by_id(client, city):
     response = await client.get(f"/cities/{city.id}")

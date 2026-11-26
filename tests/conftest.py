@@ -3,6 +3,7 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from schemas.city import CityResponse
+from schemas.gem_type import GemTypeResponse
 from src.database import get_session, Base
 from src.app import app
 
@@ -38,3 +39,12 @@ async def city(client):
         json={"name": "Москоу", "country_code":"RU"}
     )
     return CityResponse(**response.json())
+
+@pytest.fixture
+async def gem_type(client):
+    response = await client.post(
+        "/gem-types/",
+        json={"name": "Round", "storage_key": "undefined"}
+    )
+
+    return GemTypeResponse(**response.json())

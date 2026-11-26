@@ -51,7 +51,7 @@ async def update_gem_type(gem_type_id: int, data: GemTypeUpdate, session: Sessio
 
 
 # Авторизаци (проверка на админа)
-@router.delete("/{gem_type_id}", status_code=status.HTTP_200_OK)
+@router.delete("/{gem_type_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_gem_type(gem_type_id: int, session: SessionDep):
     await GemTypeRepository(session).delete(gem_type_id)
     await session.commit()

@@ -16,7 +16,7 @@ async def create_city(data: CityRequest, session: SessionDep):
 
 
 # Авторизация (только админу)
-@router.post("/bulk", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/bulk", status_code=status.HTTP_201_CREATED)
 async def create_many_cities(data: list[CityRequest], session: SessionDep):
     await CityRepository(session).add_bulk(data)
     await session.commit()
