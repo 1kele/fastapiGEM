@@ -1,18 +1,15 @@
-import pytest
-
-from enums.request_status import RequestStatus
+from src.enums.request_status import RequestStatus
 from src.enums.clarity_type import ClarityType
 from src.enums.offer_status import OfferStatus
 from src.enums.quantity_type import QuantityType
 from src.enums.stone_size import StoneSize
 from src.enums.treatment_type import TreatmentType
-from src.exceptions.base import PermissionDeniedError
 
 
-async def test_create_offer(client, gem_request, city, auth_user, user1):
+async def test_create_offer(client, gem_request1, city, auth_user, user1):
     auth_user(user1)
     response = await client.post(
-        f"/requests/{gem_request.id}/offers",
+        f"/requests/{gem_request1.id}/offers",
         json={
             "city_id": city.id,
             "shape": "Oval",
@@ -35,7 +32,7 @@ async def test_create_offer(client, gem_request, city, auth_user, user1):
 
     assert data["id"] > 0
     assert data["city_id"] == city.id
-    assert data["request_id"] == gem_request.id
+    assert data["request_id"] == gem_request1.id
     assert data["status"] == OfferStatus.PENDING
     assert data["price"] == 5000.0
     assert data["seller_id"] == user1.id
@@ -47,14 +44,14 @@ async def test_create_offer(client, gem_request, city, auth_user, user1):
     assert get_offer.status_code == 200
     assert get_offer.json()["price"] == 5000.0
 
-async def test_get_offers_by_request_empty(client, gem_request):
-    response = await client.get(f"/requests/{gem_request.id}/offers")
+async def test_get_offers_by_request_empty(client, gem_request1):
+    response = await client.get(f"/requests/{gem_request1.id}/offers")
 
     assert response.status_code == 404
 
-async def test_get_offers_by_request_success(client, gem_request, auth_user, user1, offer_1, offer_2):
+async def test_get_offers_by_request_success(client, gem_request1, auth_user, user1, offer_1, offer_2):
     auth_user(user1)
-    response = await client.get(f"/requests/{gem_request.id}/offers")
+    response = await client.get(f"/requests/{gem_request1.id}/offers")
 
     data = response.json()
     assert response.status_code == 200
@@ -131,11 +128,11 @@ async def test_update_offer_denied(client, offer_1, auth_user, user2):
 
     assert response.status_code == 403
 
-async def test_accept_offer_success(client, offer_1, gem_request, auth_user, user1):
+async def test_accept_offer_success(client, offer_1, gem_request1, auth_user, user1):
     auth_user(user1)
 
-    assert gem_request.creator_id == user1.id
-    assert offer_1.request_id == gem_request.id
+    assert gem_request1.creator_id == user1.id
+    assert offer_1.request_id == gem_request1.id
     assert offer_1.status == OfferStatus.PENDING
 
     response = await client.patch(
@@ -145,16 +142,16 @@ async def test_accept_offer_success(client, offer_1, gem_request, auth_user, use
     assert response.status_code == 200
 
     get_offer = await client.get(f"/offers/{offer_1.id}")
-    get_response = await client.get(f"/requests/{gem_request.id}")
+    get_response = await client.get(f"/requests/{gem_request1.id}")
 
     assert get_offer.status_code == 200
     assert get_offer.json()["status"] == OfferStatus.ACCEPTED.value
     assert get_response.json()["status"] == RequestStatus.CREATED.value
 
-async def test_accept_offer_reject(client, offer_1, gem_request, auth_user, user2):
+async def test_accept_offer_reject(client, offer_1, gem_request1, auth_user, user2):
     auth_user(user2)
 
-    assert gem_request.creator_id != user2.id
+    assert gem_request1.creator_id != user2.id
 
     response = await client.patch(
         f"/offers/{offer_1.id}/accepted"
@@ -162,11 +159,11 @@ async def test_accept_offer_reject(client, offer_1, gem_request, auth_user, user
 
     assert response.status_code == 403
 
-async def test_reject_offer_success(client, offer_1, gem_request, auth_user, user1):
+async def test_reject_offer_success(client, offer_1, gem_request1, auth_user, user1):
     auth_user(user1)
 
-    assert gem_request.creator_id == user1.id
-    assert offer_1.request_id == gem_request.id
+    assert gem_request1.creator_id == user1.id
+    assert offer_1.request_id == gem_request1.id
 
     response = await client.patch(
         f"/offers/{offer_1.id}/rejected"
@@ -175,16 +172,16 @@ async def test_reject_offer_success(client, offer_1, gem_request, auth_user, use
     assert response.status_code == 200
 
     get_offer = await client.get(f"/offers/{offer_1.id}")
-    get_response = await client.get(f"/requests/{gem_request.id}")
+    get_response = await client.get(f"/requests/{gem_request1.id}")
 
     assert get_offer.status_code == 200
     assert get_offer.json()["status"] == OfferStatus.REJECTED.value
     assert get_response.json()["status"] == RequestStatus.CREATED.value
 
-async def test_reject_offer_reject(client, offer_1, gem_request, auth_user, user2):
+async def test_reject_offer_reject(client, offer_1, gem_request1, auth_user, user2):
     auth_user(user2)
 
-    assert gem_request.creator_id != user2.id
+    assert gem_request1.creator_id != user2.id
 
     response = await client.patch(
         f"/offers/{offer_1.id}/rejected"
@@ -192,11 +189,11 @@ async def test_reject_offer_reject(client, offer_1, gem_request, auth_user, user
 
     assert response.status_code == 403
 
-async def test_withdraw_offer_success(client, offer_1, gem_request, auth_user, user1):
+async def test_withdraw_offer_success(client, offer_1, gem_request1, auth_user, user1):
     auth_user(user1)
 
-    assert gem_request.creator_id == user1.id
-    assert offer_1.request_id == gem_request.id
+    assert gem_request1.creator_id == user1.id
+    assert offer_1.request_id == gem_request1.id
 
     response = await client.patch(
         f"/offers/{offer_1.id}/withdrawn"
@@ -205,16 +202,16 @@ async def test_withdraw_offer_success(client, offer_1, gem_request, auth_user, u
     assert response.status_code == 200
 
     get_offer = await client.get(f"/offers/{offer_1.id}")
-    get_response = await client.get(f"/requests/{gem_request.id}")
+    get_response = await client.get(f"/requests/{gem_request1.id}")
 
     assert get_offer.status_code == 200
     assert get_offer.json()["status"] == OfferStatus.WITHDRAWN.value
     assert get_response.json()["status"] == RequestStatus.CREATED.value
 
-async def test_withdraw_offer_reject(client, offer_1, gem_request, auth_user, user2):
+async def test_withdraw_offer_reject(client, offer_1, gem_request1, auth_user, user2):
     auth_user(user2)
 
-    assert gem_request.creator_id != user2.id
+    assert gem_request1.creator_id != user2.id
 
     response = await client.patch(
         f"/offers/{offer_1.id}/withdrawn"

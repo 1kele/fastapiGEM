@@ -3,8 +3,8 @@ import sys
 from fastapi import FastAPI
 from loguru import logger
 
-from src.exceptions.base import AppError
 from src.exception_handlers import app_error_handler
+from src.exceptions.base import AppError
 from src.routers.city import router as city_router
 from src.routers.gem_type import router as gem_type_router
 from src.routers.offer import request_offer_router

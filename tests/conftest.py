@@ -113,7 +113,8 @@ async def gem_type(client):
     return GemTypeResponse(**response.json())
 
 @pytest.fixture
-async def gem_request(client, gem_type, city):
+async def gem_request1(client, gem_type, city, auth_user, user1):
+    auth_user(user1)
     response = await client.post(
         "/requests/",
         json={
@@ -142,10 +143,40 @@ async def gem_request(client, gem_type, city):
     return RequestResponse(**response.json())
 
 @pytest.fixture
-async def offer_1(client, gem_request, city, auth_user, user1):
+async def gem_request2(client, gem_type, city, auth_user, user1):
     auth_user(user1)
     response = await client.post(
-        f"/requests/{gem_request.id}/offers",
+        "/requests/",
+        json={
+            "stone_id": gem_type.id,
+            "city_id": city.id,
+            "shape": "Cushion",
+            "color": "Royal Blue",
+            "origin": "LKA",
+            "type_quantity": QuantityType.SINGLE,
+            "weight_min": 2.50,
+            "weight_max": 6.80,
+            "stone_size": StoneSize.LARGE,
+            "clarity": ClarityType.I3,
+            "inclusions": "Small natural crystal inclusions",
+            "treatment": TreatmentType.WAXING,
+            "price_min": 2500.00,
+            "price_max": 12000.00,
+            "additional_information": "Looking for a natural blue gemstone with high color saturation",
+            "created_at": f"{datetime.now()}",
+            "expires_at": f"{datetime.now() + timedelta(days=14)}",
+            "is_profile_hidden": False,
+            "has_certificate": True,
+        },
+    )
+
+    return RequestResponse(**response.json())
+
+@pytest.fixture
+async def offer_1(client, gem_request1, city, auth_user, user1):
+    auth_user(user1)
+    response = await client.post(
+        f"/requests/{gem_request1.id}/offers",
         json={
             "city_id": city.id,
             "shape": "Cushion",
@@ -165,10 +196,10 @@ async def offer_1(client, gem_request, city, auth_user, user1):
     return OfferResponse(**response.json())
 
 @pytest.fixture
-async def offer_2(client, gem_request, city, auth_user, user1):
+async def offer_2(client, gem_request1, city, auth_user, user1):
     auth_user(user1)
     response = await client.post(
-        f"/requests/{gem_request.id}/offers",
+        f"/requests/{gem_request1.id}/offers",
         json={
             "city_id": city.id,
             "shape": "Pear",
@@ -188,10 +219,10 @@ async def offer_2(client, gem_request, city, auth_user, user1):
     return OfferResponse(**response.json())
 
 @pytest.fixture
-async def offer_3(client, gem_request, city, auth_user, user2):
+async def offer_3(client, gem_request1, city, auth_user, user2):
     auth_user(user2)
     response = await client.post(
-        f"/requests/{gem_request.id}/offers",
+        f"/requests/{gem_request1.id}/offers",
         json={
             "city_id": city.id,
             "shape": "Emerald Cut",

@@ -4,7 +4,7 @@ from src.database import Base
 from src.enums.offer_status import OfferStatus
 from src.enums.request_status import RequestStatus
 from src.exceptions.base import PermissionDeniedError
-from src.exceptions.offer import InvalidStatusTransitionError
+from src.exceptions.base import InvalidStatusTransitionError
 from src.repositories.offer import OfferRepository
 from src.schemas.offer import OfferStatusChange, OfferUpdate
 

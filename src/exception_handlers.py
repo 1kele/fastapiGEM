@@ -10,10 +10,9 @@ ERROR_STATUS_MAP = {
     BusinessValidationError: 422,
 }
 
+
 async def app_error_handler(request: Request, exc: Exception) -> JSONResponse:
     for error_type, status_code in ERROR_STATUS_MAP.items():
         if isinstance(exc, error_type):
-            return JSONResponse(
-                status_code=status_code, content={"detail": str(exc)}
-            )
+            return JSONResponse(status_code=status_code, content={"detail": str(exc)})
     return JSONResponse(status_code=500, content={"detail": str(exc)})
