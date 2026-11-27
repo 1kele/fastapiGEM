@@ -4,7 +4,11 @@ from fastapi import FastAPI
 from loguru import logger
 
 from src.exceptions.request import InvalidWeightRangeError
-from src.exception_handlers import invalid_status_handler, not_found_handler, invalid_weight_handler
+from src.exception_handlers import (
+    invalid_status_handler,
+    not_found_handler,
+    invalid_weight_handler,
+)
 from src.exceptions.base import NotFoundError
 from src.exceptions.offer import InvalidStatusTransitionError
 from src.routers.city import router as city_router

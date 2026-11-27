@@ -17,7 +17,9 @@ router = APIRouter(tags=["Request"], prefix="/requests")
 
 # Авторизация
 @router.post("/")
-async def create_request(data: RequestCreate,current_user: CurrentUserDep,  session: SessionDep):
+async def create_request(
+    data: RequestCreate, current_user: CurrentUserDep, session: SessionDep
+):
     new_request = await RequestRepository(session).add(
         RequestCreateInternal(**data.model_dump(), creator_id=current_user.id)
     )

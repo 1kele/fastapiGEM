@@ -82,6 +82,9 @@ class BaseRepository[ModelT: Base]:
         return instance
 
     async def delete(self, id: int) -> None:
-        stmt = delete(self.model).filter_by(id=id)
+        stmt = delete(self.model).filter_by(id=id).returning(self.model)
 
-        await self.session.execute(stmt)
+        result = await self.session.execute(stmt)
+
+        if not result.scalar_one_or_none():
+            raise NotFoundError("Object not found")
