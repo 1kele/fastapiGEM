@@ -17,8 +17,8 @@ class RequestRepository(BaseRepository[RequestsORM]):
     async def get_filter_by(
         self,
         filters: RequestFilter,
-        sort_by: RequestSortField,
-        sort: Sort,
+        sort_by: RequestSortField | None,
+        sort: Sort | None,
         offset: int,
         limit: int,
     ):

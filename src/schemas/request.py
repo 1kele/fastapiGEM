@@ -1,7 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.enums.clarity_type import ClarityType
 from src.enums.quantity_type import QuantityType
@@ -23,13 +24,20 @@ class RequestCreate(BaseModel):
     clarity: ClarityType
     inclusions: str
     treatment: TreatmentType
-    price_min: Decimal
-    price_max: Decimal
+    price_min: Decimal = Field(ge=0)
+    price_max: Decimal = Field(gt=0)
     additional_information: str
     created_at: datetime
     expires_at: datetime
     is_profile_hidden: bool
     has_certificate: bool
+
+    @model_validator(mode="after")
+    def validate_weight_range(self) -> Self:
+        if self.weight_max < self.weight_min:
+            raise ValueError("Minimum weight cannot exceed maximum weight")
+
+        return self
 
 
 class RequestCreateInternal(RequestCreate):
@@ -72,8 +80,8 @@ class RequestFilter(BaseModel):
     weight_min: Decimal | None = Field(default=None, ge=0)
     weight_max: Decimal | None = Field(default=None, gt=0)
     stone_size: list[StoneSize] | None = None
-    price_min: Decimal | None = None
-    price_max: Decimal | None = None
+    price_min: Decimal | None = Field(default=None, ge=0)
+    price_max: Decimal | None = Field(default=None, gt=0)
 
 
 class ChangeRequestStatus(BaseModel):
