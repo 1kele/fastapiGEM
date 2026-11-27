@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.enums.request_status import RequestStatus
 from src.exceptions.base import PermissionDeniedError
-from src.exceptions.request import InvalidStatusTransitionError
+from src.exceptions.request import InvalidStatusTransitionError, InvalidWeightRangeError
 from src.repositories.request import RequestRepository
 from src.schemas.request import ChangeRequestStatus, RequestUpdate
 
@@ -40,9 +40,15 @@ class RequestServices:
     async def update_request(
         request_id: int, data: RequestUpdate, user_id: int, session: AsyncSession
     ):
-        await RequestServices()._check_request_ownership(
+        request = await RequestServices()._check_request_ownership(
             request_id=request_id, user_id=user_id, session=session
         )
+        new_min = data.weight_min if data.weight_min is not None else request.weight_min
+        new_max = data.weight_max if data.weight_max is not None else request.weight_max
+
+        if new_min > new_max:
+            raise InvalidWeightRangeError("Minimum weight cannot exceed maximum weight")
+
         return await RequestRepository(session).update(id=request_id, data=data)
 
     @staticmethod

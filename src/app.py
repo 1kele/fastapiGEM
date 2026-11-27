@@ -3,7 +3,8 @@ import sys
 from fastapi import FastAPI
 from loguru import logger
 
-from src.exception_handlers import invalid_status_handler, not_found_handler
+from src.exceptions.request import InvalidWeightRangeError
+from src.exception_handlers import invalid_status_handler, not_found_handler, invalid_weight_handler
 from src.exceptions.base import NotFoundError
 from src.exceptions.offer import InvalidStatusTransitionError
 from src.routers.city import router as city_router
@@ -42,6 +43,7 @@ app = FastAPI()
 
 app.add_exception_handler(NotFoundError, not_found_handler)
 app.add_exception_handler(InvalidStatusTransitionError, invalid_status_handler)
+app.add_exception_handler(InvalidWeightRangeError, invalid_weight_handler)
 
 app.include_router(gem_type_router)
 app.include_router(request_router)
