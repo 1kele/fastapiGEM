@@ -1,9 +1,16 @@
+from datetime import datetime, timedelta
+
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
+from enums.clarity_type import ClarityType
+from enums.quantity_type import QuantityType
+from enums.stone_size import StoneSize
+from enums.treatment_type import TreatmentType
 from schemas.city import CityResponse
 from schemas.gem_type import GemTypeResponse
+from schemas.request import RequestResponse
 from src.database import get_session, Base
 from src.app import app
 
@@ -48,3 +55,32 @@ async def gem_type(client):
     )
 
     return GemTypeResponse(**response.json())
+
+@pytest.fixture
+async def gem_request(client, gem_type, city):
+    response = await client.post(
+        "/requests/",
+        json={
+            "stone_id": gem_type.id,
+            "city_id": city.id,
+            "shape": "Oval",
+            "color": "Deep Red",
+            "origin": "MMR",
+            "type_quantity": QuantityType.SINGLE,
+            "weight_min": 1.25,
+            "weight_max": 4.75,
+            "stone_size": StoneSize.MEDIUM,
+            "clarity": ClarityType.FL,
+            "inclusions": "Minor natural inclusions",
+            "treatment": TreatmentType.OILING,
+            "price_min": 1250.00,
+            "price_max": 7800.00,
+            "additional_information": "Looking for a natural gemstone with excellent color",
+            "created_at": f"{datetime.now()}",
+            "expires_at": f"{(datetime.now() + timedelta(days=7))}",
+            "is_profile_hidden": True,
+            "has_certificate": False,
+        },
+    )
+
+    return RequestResponse(**response.json())
