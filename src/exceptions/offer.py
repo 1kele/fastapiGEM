@@ -1,5 +1,1 @@
-from src.exceptions.base import AppError
-
-
-class InvalidStatusTransitionError(AppError):
-    pass
+from src.exceptions.base import InvalidStatusTransitionError
