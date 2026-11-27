@@ -11,7 +11,7 @@ class UserRequest(BaseModel):
     last_name: str
     email: str
     phone: str
-    date_of_birthday: datetime
+    date_of_birth: datetime
     organization: str
     experience: int
     address: str
@@ -30,7 +30,7 @@ class UserUpdate(BaseModel):
     last_name: str | None = None
     email: str | None = None
     phone: str | None = None
-    date_of_birthday: datetime | None = None
+    date_of_birth: datetime | None = None
     organization: str | None = None
     experience: int | None = None
     address: str | None = None

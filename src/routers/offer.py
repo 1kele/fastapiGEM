@@ -33,8 +33,12 @@ async def create_offer(
 
 
 @request_offer_router.get("/requests/{request_id}/offers")
-async def get_offer(request_id: int, session: SessionDep):
-    return await OfferRepository(session).get_or_raise(request_id=request_id)
+async def get_offer_by_request_id(
+    request_id: int, pagination: PaginationDep, session: SessionDep
+):
+    return await OfferRepository(session).get_all(
+        request_id=request_id, offset=pagination.offset, limit=pagination.limit
+    )
 
 
 # Авторизация

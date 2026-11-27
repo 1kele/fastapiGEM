@@ -19,7 +19,7 @@ async def get_current_user():
         last_name="Пользователь",
         email="test@example.com",
         phone="89618239112",
-        date_of_birthday=datetime(2000, 12, 12),
+        date_of_birth=datetime(2000, 12, 12),
         organization="GemScout",
         experience=2,
         address="Тестовый адрес",

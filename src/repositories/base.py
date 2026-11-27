@@ -62,6 +62,9 @@ class BaseRepository[ModelT: Base]:
 
         instance = result.scalars().all()
 
+        if not instance:
+            raise NotFoundError("Objects not found")
+
         return instance
 
     async def update(self, id: int, data: BaseModel) -> ModelT:
