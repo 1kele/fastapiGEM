@@ -40,7 +40,7 @@ async def test_create_request(client, gem_type, city):
     assert response.json()["stone_id"] == gem_type.id
     assert "id" in response.json()
 
-async def test_get_my_requests(client):
+async def test_get_my_requests(client, gem_request):
     response = await client.get("/requests/my")
 
     assert response.status_code == 200
