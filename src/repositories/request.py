@@ -1,6 +1,7 @@
 from operator import and_
 
 from sqlalchemy import select
+from collections.abc import Sequence
 
 from src.enums.request_sort import RequestSortField
 from src.enums.request_status import RequestStatus
@@ -21,7 +22,7 @@ class RequestRepository(BaseRepository[RequestsORM]):
         sort: Sort | None,
         offset: int,
         limit: int,
-    ):
+    ) -> Sequence[RequestsORM]:
         stmt = select(self.model)
 
         if filters.stone_id:
@@ -37,11 +38,11 @@ class RequestRepository(BaseRepository[RequestsORM]):
         if filters.weight_min is not None:
             stmt = stmt.where(self.model.weight_max >= filters.weight_min)
         if filters.weight_max is not None:
-            stmt = stmt.where(self.model.weight_min >= filters.weight_max)
+            stmt = stmt.where(self.model.weight_min <= filters.weight_max)
         if filters.price_min is not None:
-            stmt = stmt.where(self.model.price_min >= filters.price_min)
+            stmt = stmt.where(self.model.price_max >= filters.price_min)
         if filters.price_max is not None:
-            stmt = stmt.where(self.model.price_max >= filters.price_max)
+            stmt = stmt.where(self.model.price_min <= filters.price_max)
 
         if sort_by == RequestSortField.WEIGHT:
             if sort == Sort.DESC:
