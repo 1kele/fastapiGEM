@@ -1,0 +1,64 @@
+from datetime import datetime
+from decimal import Decimal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from src.enums.clarity_type import ClarityType
+from src.enums.offer_status import OfferStatus
+from src.enums.quantity_type import QuantityType
+from src.enums.stone_size import StoneSize
+from src.enums.treatment_type import TreatmentType
+
+
+class OfferRequest(BaseModel):
+    city_id: int
+    shape: str
+    color: str
+    origin: str
+    type_quantity: QuantityType
+    weight: Decimal = Field(gt=0)
+    size: StoneSize
+    clarity: ClarityType
+    inclusions: str
+    treatment: TreatmentType
+    price: Decimal = Field(gt=0)
+    additional_information: str
+
+
+class OfferResponse(OfferRequest):
+    id: int
+    request_id: int
+    seller_id: int
+    status: OfferStatus
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class OfferCreateInternal(OfferRequest):
+    request_id: int
+    seller_id: int
+
+
+class OfferUpdate(BaseModel):
+    city_id: int | None = None
+    shape: str | None = None
+    color: str | None = None
+    origin: str | None = None
+    type_quantity: QuantityType | None = None
+    weight: Decimal | None = Field(default=None, gt=0)
+    size: StoneSize | None = None
+    clarity: ClarityType | None = None
+    inclusions: str | None = None
+    treatment: TreatmentType | None = None
+    price: Decimal | None = Field(default=None, gt=0)
+    additional_information: str | None = None
+
+
+class OfferStatusChange(BaseModel):
+    status: OfferStatus
+
+
+class OfferStatusResponse(BaseModel):
+    id: int
+    status: OfferStatus
