@@ -58,7 +58,7 @@ async def get_my_requests(
 
 @router.get("/{request_id}")
 async def get_requests_by_id(request_id: int, session: SessionDep):
-    return await RequestRepository(session).get_or_raise(id=request_id)
+    return await RequestServices.get_requests_by_id(request_id=request_id, session=session)
 
 
 # Авторизация(проверка владельца)

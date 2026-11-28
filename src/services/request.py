@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import Sequence
 
 from enums.request_sort import RequestSortField
 from enums.sort import Sort
+from src.models import RequestsORM
 from src.enums.request_status import RequestStatus
 from src.exceptions.base import PermissionDeniedError
 from src.exceptions.request import InvalidStatusTransitionError, InvalidWeightRangeError
@@ -62,6 +64,14 @@ class RequestServices:
         await RequestRepository(session).delete(id=request_id)
 
     @staticmethod
+    def _validate_request_visibility(request: RequestsORM):
+        return (
+            RequestResponseHidden.model_validate(request)
+            if request.is_profile_hidden
+            else RequestResponse.model_validate(request)
+        )
+
+    @staticmethod
     async def get_requests_filter_by(session: AsyncSession,
         filters: RequestFilter,
         sort_by: RequestSortField | None,
@@ -77,8 +87,11 @@ class RequestServices:
             limit=limit,
         )
 
-        result = [RequestResponseHidden.model_validate(request)
-                  if request.is_profile_hidden else RequestResponse.model_validate(request)
-                  for request in get_requests]
+        result = [RequestServices._validate_request_visibility(request) for request in get_requests]
 
         return result
+
+    @staticmethod
+    async def get_requests_by_id(request_id: int, session: AsyncSession):
+        request = await RequestRepository(session).get_or_raise(id=request_id)
+        return RequestServices._validate_request_visibility(request)
