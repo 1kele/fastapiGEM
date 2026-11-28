@@ -1,10 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from enums.request_sort import RequestSortField
+from enums.sort import Sort
 from src.enums.request_status import RequestStatus
 from src.exceptions.base import PermissionDeniedError
 from src.exceptions.request import InvalidStatusTransitionError, InvalidWeightRangeError
 from src.repositories.request import RequestRepository
-from src.schemas.request import ChangeRequestStatus, RequestUpdate
+from src.schemas.request import ChangeRequestStatus, RequestUpdate, RequestFilter, RequestResponseHidden, \
+    RequestResponse
 
 
 class RequestServices:
@@ -57,3 +60,25 @@ class RequestServices:
             request_id=request_id, user_id=user_id, session=session
         )
         await RequestRepository(session).delete(id=request_id)
+
+    @staticmethod
+    async def get_requests_filter_by(session: AsyncSession,
+        filters: RequestFilter,
+        sort_by: RequestSortField | None,
+        sort: Sort | None,
+        offset: int,
+        limit: int,
+    ):
+        get_requests = await RequestRepository(session).get_filter_by(
+            filters=filters,
+            sort_by=sort_by,
+            sort=sort,
+            offset=offset,
+            limit=limit,
+        )
+
+        result = [RequestResponseHidden.model_validate(request)
+                  if request.is_profile_hidden else RequestResponse.model_validate(request)
+                  for request in get_requests]
+
+        return result

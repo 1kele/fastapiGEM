@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, BackgroundTasks
 
 from src.database import SessionDep
 from src.depends import CurrentUserDep, PaginationDep, RequestFilterDep
@@ -36,7 +36,8 @@ async def get_requests(
     sort_by: RequestSortField | None = None,
     sort: Sort | None = None,
 ):
-    return await RequestRepository(session).get_filter_by(
+    return await RequestServices.get_requests_filter_by(
+        session=session,
         filters=filters,
         sort_by=sort_by,
         sort=sort,

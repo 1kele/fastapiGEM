@@ -89,7 +89,7 @@ async def test_get_requests(client, gem_request1, gem_type, city, auth_user, use
 
     data = response.json()
 
-    request_creators_ids = {request["creator_id"] for request in data}
+    request_creators_ids = {request["creator_id"] for request in data if not request["is_profile_hidden"]}
 
     assert all(creator_id == user1.id for creator_id in request_creators_ids)
     assert isinstance(data, list)

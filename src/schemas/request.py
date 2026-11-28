@@ -49,6 +49,10 @@ class RequestResponse(RequestCreateInternal):
     status: RequestStatus
     model_config = ConfigDict(from_attributes=True)
 
+class RequestResponseHidden(RequestCreate):
+    id: int
+    status: RequestStatus
+    model_config = ConfigDict(from_attributes=True)
 
 class RequestUpdate(BaseModel):
     stone_id: int | None = None
